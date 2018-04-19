@@ -124,8 +124,8 @@ module VagrantPlugins
           # Create a new HTTP client
           clnt = HTTPClient.new
 
-          # Set SSL proto to TLSv1
-          clnt.ssl_config.ssl_version = :TLSv1
+          # Set SSL proto
+          clnt.ssl_config.ssl_version = env[:ssl_version] || :TLSv1
 
           # Disable SSL cert verification
           clnt.ssl_config.verify_mode = (OpenSSL::SSL::VERIFY_NONE)

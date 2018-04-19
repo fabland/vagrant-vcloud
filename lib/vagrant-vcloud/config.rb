@@ -5,6 +5,13 @@ module VagrantPlugins
     class Config < Vagrant.plugin('2', :config)
       # login attributes
 
+      # Which SSL version to connect to vcloud
+      # Can be any string that SSLContext allows.
+      # E.g. "TLSv1", "TLSv1_2" 
+      #
+      # @return [String] (default TLS1)
+      attr_accessor :ssl_version
+
       # The vCloud Director hostname
       #
       # @return [String]
