@@ -2086,9 +2086,9 @@ module VagrantPlugins
               nic = cfg.nics[nic_count]
 
               orig_mac = item.css('rasd|Address').first.text
-              orig_ip = item.css('rasd|Connection').first['vcloud:ipAddress']
-              orig_address_mode = item.css('rasd|Connection').first['vcloud:ipAddressingMode']
-              orig_primary = item.css('rasd|Connection').first['vcloud:primaryNetworkConnection']
+              orig_ip = item.css('rasd|Connection').first['ipAddress']
+              orig_address_mode = item.css('rasd|Connection').first['ipAddressingMode']
+              orig_primary = item.css('rasd|Connection').first['primaryNetworkConnection']
               orig_network = item.css('rasd|Connection').first.text
               orig_parent = item.css('rasd|AddressOnParent').first.text
               # resourceSubType cannot be changed for an existing network card
@@ -2099,9 +2099,9 @@ module VagrantPlugins
               if !nic[:ip].nil?
                 changed = true if orig_ip.nil? || nic[:ip].upcase != orig_ip.upcase
               end
-              changed = true if nic[:ip_mode].upcase != orig_address_mode.upcase
+	      changed = true if nic[:ip_mode].to_s.upcase != orig_address_mode.to_s.upcase
               changed = true if nic[:primary] != orig_primary
-              changed = true if nic[:network].upcase != orig_network.upcase
+	      changed = true if nic[:network].to_s.upcase != orig_network.to_s.upcase
               changed = true if nic_address_on_parent != orig_parent
 
               if changed
@@ -2110,15 +2110,15 @@ module VagrantPlugins
                 conn = item.css('rasd|Connection').first
                 conn.content = nic[:network]
                 if nic[:ip_mode].upcase == 'DHCP'
-                  conn['vcloud:ipAddressingMode'] = 'DHCP'
+                  conn['ipAddressingMode'] = 'DHCP'
                 elsif nic[:ip_mode].upcase == 'STATIC'
-                  conn['vcloud:ipAddressingMode'] = 'MANUAL'
-                  conn['vcloud:ipAddress'] = nic[:ip]
+                  conn['ipAddressingMode'] = 'MANUAL'
+                  conn['ipAddress'] = nic[:ip]
                 elsif nic[:ip_mode].upcase == 'POOL'
-                  conn['vcloud:ipAddressingMode'] = 'POOL'
-                  conn['vcloud:ipAddress'] = nic[:ip] if !nic[:ip].nil?
+                  conn['ipAddressingMode'] = 'POOL'
+                  conn['ipAddress'] = nic[:ip] if !nic[:ip].nil?
                 end
-                conn['vcloud:primaryNetworkConnection'] = nic[:primary]
+                conn['primaryNetworkConnection'] = nic[:primary]
               end
               nic_count = nic_count + 1
             elsif type.content == '17'
@@ -2188,15 +2188,15 @@ module VagrantPlugins
               conn = newnic.doc.css('rasd|Connection').first
               conn['xmlns:vcloud'] = 'http://www.vmware.com/vcloud/v1.5'
               if nic[:ip_mode].upcase == 'DHCP'
-                conn['vcloud:ipAddressingMode'] = 'DHCP'
+                conn['ipAddressingMode'] = 'DHCP'
               elsif nic[:ip_mode].upcase == 'STATIC'
-                conn['vcloud:ipAddressingMode'] = 'MANUAL'
-                conn['vcloud:ipAddress'] = nic[:ip]
+                conn['ipAddressingMode'] = 'MANUAL'
+                conn['ipAddress'] = nic[:ip]
               elsif nic[:ip_mode].upcase == 'POOL'
-                conn['vcloud:ipAddressingMode'] = 'POOL'
-                conn['vcloud:ipAddress'] = nic[:ip] if !nic[:ip].nil?
+                conn['ipAddressingMode'] = 'POOL'
+                conn['ipAddress'] = nic[:ip] if !nic[:ip].nil?
               end
-              conn['vcloud:primaryNetworkConnection'] = nic[:primary]
+              conn['primaryNetworkConnection'] = nic[:primary]
               response.css('ovf|Item').last.add_next_sibling(newnic.doc.css('ovf|Item'))
             end
           end
