@@ -46,6 +46,16 @@ module VagrantPlugins
 
           # Instantiate the proper version driver for vCloud
           @logger.debug("Finding driver for vCloud version: #{@version}")
+          driver_map   = {
+            '5.1' => Version_5_1,
+            '5.5' => Version_5_1, # Binding vCloud 5.5 API on our current 5.1 implementation
+            '5.6' => Version_5_1, # Binding vCHS API on our current 5.1 implementation
+            '5.7' => Version_5_1, # Binding vCHS API on our current 5.1 implementation
+            '9.0' => Version_5_1  # Binding vCHS API on our current 5.1 implementation
+          }
+
+          # Instantiate the proper version driver for vCloud
+          @logger.debug("Finding driver for vCloud version: #{@version}")
 
           if @version.start_with?('0.9') ||
              @version.start_with?('1.0') ||
@@ -54,7 +64,15 @@ module VagrantPlugins
             raise Errors::VCloudOldVersion, :version => @version
           end
 
-          driver_klass = Version_5_1
+          driver_klass = nil
+          driver_map.each do |key, klass|
+            if @version.start_with?(key)
+              driver_klass = klass
+              break
+            end
+          end          
+        
+          driver_klass = Version_9 if driver_klass.nil?
 
           @logger.info("Using vCloud driver: #{driver_klass}")
           @driver = driver_klass.new(@hostname, @username, @password, @org_name)
@@ -106,7 +124,7 @@ module VagrantPlugins
           clnt = HTTPClient.new
 
           # Set SSL proto
-          clnt.ssl_config.ssl_version = env[:ssl_version] || :TLSv1
+          clnt.ssl_config.ssl_version = :TLSv1_2
 
           # Disable SSL cert verification
           clnt.ssl_config.verify_mode = (OpenSSL::SSL::VERIFY_NONE)

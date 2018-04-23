@@ -289,7 +289,7 @@ module VagrantPlugins
             clnt = HTTPClient.new
 
             # Set SSL proto
-            clnt.ssl_config.ssl_version = env[:ssl_version] || :TLSv1 
+            clnt.ssl_config.ssl_version = :TLSv1_2 
 
             # Disable SSL cert verification
             clnt.ssl_config.verify_mode = (OpenSSL::SSL::VERIFY_NONE)
@@ -405,7 +405,7 @@ module VagrantPlugins
             clnt = HTTPClient.new
 
             # Set SSL proto
-            clnt.ssl_config.ssl_version = env[:ssl_version] || :TLSv1
+            clnt.ssl_config.ssl_version = :TLSv1_2
 
             # Disable SSL cert verification
             clnt.ssl_config.verify_mode = (OpenSSL::SSL::VERIFY_NONE)
